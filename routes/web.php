@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\InventoryController;
 
 // Redirige la racine vers la page de connexion pour le staff
 Route::get('/', function () {
@@ -37,5 +38,10 @@ Route::get('/films/{id}', [FilmController::class, 'show'])->name('films.show'); 
 Route::get('/films/{id}/edit', [FilmController::class, 'edit'])->name('films.edit'); // Formulaire de modification
 Route::put('/films/{id}', [FilmController::class, 'update'])->name('films.update'); // Mise à jour d'un film
 Route::delete('/films/{id}', [FilmController::class, 'destroy'])->name('films.destroy'); // Suppression d'un film
+
+
+Route::resource('inventory', InventoryController::class);
+
+
 
 // require __DIR__.'/auth.php';

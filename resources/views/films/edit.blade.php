@@ -20,74 +20,39 @@
 
                         <!-- Titre -->
                         <div>
-                            <label for="title" class="block text-gray-700 dark:text-gray-300 font-medium">Titre</label>
-                            <input 
-                                type="text" 
-                                id="title"
-                                name="title" 
-                                value="{{ $film['title'] }}" 
-                                required
-                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
-                            />
+                            <label for="title">Titre</label>
+                            <input type="text" name="title" id="title" value="{{ old('title', $film['title']) }}" required>
                         </div>
 
                         <!-- Description -->
                         <div>
-                            <label for="description" class="block text-gray-700 dark:text-gray-300 font-medium">Description</label>
-                            <textarea 
-                                id="description"
-                                name="description" 
-                                required
-                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
-                            >{{ $film['description'] }}</textarea>
+                            <label for="description">Description</label>
+                            <textarea name="description" id="description" required>{{ old('description', $film['description']) }}</textarea>
                         </div>
 
                         <!-- Année de sortie -->
                         <div>
-                            <label for="releaseYear" class="block text-gray-700 dark:text-gray-300 font-medium">Année de sortie</label>
-                            <input 
-                                type="number" 
-                                id="releaseYear"
-                                name="releaseYear" 
-                                value="{{ $film['releaseYear'] }}" 
-                                required
-                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
-                            />
+                            <label for="releaseYear">Année de sortie</label>
+                            <input type="number" name="releaseYear" id="releaseYear" value="{{ old('releaseYear', $film['releaseYear']) }}" required>
                         </div>
 
                         <!-- Langue -->
                         <div>
-                            <label for="languageId" class="block text-gray-700 dark:text-gray-300 font-medium">Langue</label>
-                            <input 
-                                type="number" 
-                                id="languageId"
-                                name="languageId" 
-                                value="{{ $film['languageId'] }}" 
-                                required
-                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
-                            />
+                            <label for="languageId">ID de la langue</label>
+                            <input type="number" name="languageId" id="languageId" value="{{ old('languageId', $film['languageId']) }}" required>
                         </div>
 
-                        <!-- Tarif de location -->
-                        <div>
-                            <label for="rentalRate" class="block text-gray-700 dark:text-gray-300 font-medium">Tarif de location</label>
-                            <input 
-                                type="number" 
-                                step="0.01"
-                                id="rentalRate"
-                                name="rentalRate" 
-                                value="{{ $film['rentalRate'] }}" 
-                                required
-                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
-                            />
-                        </div>
+                        <!-- Champs cachés pour les autres paramètres requis -->
+                        <input type="hidden" name="originalLanguageId" value="{{ old('originalLanguageId', $film['originalLanguageId']) }}">
+                        <input type="hidden" name="rentalDuration" value="{{ old('rentalDuration', $film['rentalDuration']) }}">
+                        <input type="hidden" name="rentalRate" value="{{ old('rentalRate', $film['rentalRate']) }}">
+                        <input type="hidden" name="length" value="{{ old('length', $film['length']) }}">
+                        <input type="hidden" name="replacementCost" value="{{ old('replacementCost', $film['replacementCost']) }}">
+                        <input type="hidden" name="rating" value="{{ old('rating', $film['rating']) }}">
+                        <!-- Vous pouvez définir lastUpdate automatiquement, par exemple avec la date actuelle -->
+                        <input type="hidden" name="lastUpdate" value="{{ date('Y-m-d H:i:s') }}">
 
-                        <!-- Bouton de soumission -->
-                        <div class="mt-6">
-                            <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-500 dark:bg-yellow-700 dark:hover:bg-yellow-600">
-                                Mettre à jour
-                            </button>
-                        </div>
+                        <button type="submit">Mettre à jour</button>
                     </form>
                 </div>
             </div>
