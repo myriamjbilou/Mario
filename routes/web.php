@@ -40,7 +40,13 @@ Route::put('/films/{id}', [FilmController::class, 'update'])->name('films.update
 Route::delete('/films/{id}', [FilmController::class, 'destroy'])->name('films.destroy'); // Suppression d'un film
 
 
-Route::resource('inventory', InventoryController::class);
+
+Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+Route::get('/inventory/{id}', [InventoryController::class, 'show'])->name('inventory.show');
+Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
+Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+
+
 
 
 

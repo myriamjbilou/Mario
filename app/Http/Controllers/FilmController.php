@@ -7,7 +7,6 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Models\Inventory;
 
 class FilmController extends Controller
 {
@@ -113,6 +112,7 @@ class FilmController extends Controller
         ]);
 
 
+        // Fournir lastUpdate au format attendu
         $validated['lastUpdate'] = date('Y-m-d H:i:s');
         Log::info('Film store - validated data: ', $validated);
         try {

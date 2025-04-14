@@ -30,16 +30,29 @@ class InventoryController extends Controller
     {
         try {
             $response = $this->httpClient->get($this->apiBaseUrl . '/all');
-            $inventory = json_decode($response->getBody()->getContents(), true);
+            $inventory = collect(json_decode($response->getBody()->getContents(), true));
 
-            Log::info('Inventaire récupéré :', $inventory); 
+            Log::info('Inventaire récupéré :', $inventory->toArray());
 
-            return view('inventory.index', ['inventory' => $inventory]);
+            // Regrouper par filmId et storeId pour afficher le stock dispo
+            $groupedInventory = $inventory->groupBy(function ($item) {
+                return $item['filmId'] . '_' . $item['storeId'];
+            })->map(function ($items) {
+                return [
+                    'filmId' => $items[0]['filmId'],
+                    'storeId' => $items[0]['storeId'],
+                    'stockDisponible' => count($items),
+                ];
+            });
+
+            return view('inventory.index', ['inventory' => $groupedInventory]);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la récupération de l\'inventaire : ' . $e->getMessage());
             return redirect()->back()->withErrors('Impossible de récupérer les stocks.');
         }
     }
+
+
 
 
     public function show($id)
@@ -59,26 +72,40 @@ class InventoryController extends Controller
 
     public function create()
     {
-        return view('inventory.create');
+        try {
+            // Appel à l'API des films
+            $filmResponse = $this->httpClient->get(sprintf(
+                '%s:%s/toad/film/all',
+                trim(env('TOAD_SERVER', 'http://localhost'), " \"/"),
+                trim(env('TOAD_PORT', '8080'), " \"/")
+            ));
+            $films = json_decode($filmResponse->getBody()->getContents(), true);
+
+            return view('inventory.create', ['films' => $films]);
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du chargement des films pour création de stock : ' . $e->getMessage());
+            return redirect()->route('inventory.index')->withErrors('Impossible de charger les films.');
+        }
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'film_id' => 'required|integer',
-            'stock' => 'required|integer|min:1',
-        ]);
+{
+    $validated = $request->validate([
+        'film_id' => 'required|integer',
+        'store_id' => 'required|integer',
+    ]);
 
-        try {
-            $this->httpClient->post($this->apiBaseUrl . '/add', [
-                'form_params' => $validated
-            ]);
-            return redirect()->route('inventory.index')->with('success', 'Stock ajouté avec succès !');
-        } catch (\Exception $e) {
-            Log::error("Erreur lors de l'ajout du stock : " . $e->getMessage());
-            return back()->withInput()->withErrors('Erreur serveur. Stock non ajouté.');
-        }
+    try {
+        $this->httpClient->post($this->apiBaseUrl . '/add', [
+            'form_params' => $validated
+        ]);
+        return redirect()->route('inventory.index')->with('success', 'Stock ajouté avec succès !');
+    } catch (\Exception $e) {
+        Log::error("Erreur lors de l'ajout du stock : " . $e->getMessage());
+        return back()->withInput()->withErrors('Erreur serveur. Stock non ajouté.');
     }
+}
+
 
     public function edit($id)
     {

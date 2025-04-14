@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Inventory extends Model
 {
-    protected $table = 'inventory'; // <- le nom est au singulier
+    protected $table = 'inventory'; 
     protected $primaryKey = 'inventory_id';
 
     public $timestamps = false; 
@@ -17,4 +17,6 @@ class Inventory extends Model
         'existe',
         'last_update',
     ];
+
+    
 }

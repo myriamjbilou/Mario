@@ -11,33 +11,34 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h1 class="text-2xl font-bold mb-4">Inventaire des films</h1>
 
-                    @if (!empty($inventories))
-                        <table class="w-full border border-gray-300 dark:border-gray-700">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-gray-700">
-                                    <th class="p-2 border">ID</th>
-                                    <th class="p-2 border">Film ID</th>
-                                    <th class="p-2 border">Stock</th>
-                                    <th class="p-2 border">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($inventories as $inv)
-                                    <tr>
-                                        <td class="p-2 border">{{ $inv['inventoryId'] ?? '-' }}</td>
-                                        <td class="p-2 border">{{ $inv['filmId'] ?? '-' }}</td>
-                                        <td class="p-2 border">{{ $inv['storeId'] ?? '-' }}</td>
-                                        <td class="p-2 border">
-                                            <a href="{{ route('inventory.show', $inv['inventoryId']) }}" class="text-blue-500 hover:underline">
-                                                Détails
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    @if (!empty($inventory))
+                    <table class="w-full border border-gray-300 dark:border-gray-700">
+                        <thead>
+                            <tr class="bg-gray-100 dark:bg-gray-700">
+                                <th class="p-2 border">Film ID</th>
+                                <th class="p-2 border">Store ID</th>
+                                <th class="p-2 border">Stock Disponible</th>
+                                <th class="p-2 border">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($inventory as $inv)
+                            <tr>
+                                <td class="p-2 border">{{ $inv['filmId'] }}</td>
+                                <td class="p-2 border">{{ $inv['storeId'] }}</td>
+                                <td class="p-2 border">{{ $inv['stockDisponible'] }}</td>
+                                <td class="p-2 border">
+                                    <a href="{{ route('inventory.create') }}" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
+                                        Ajouter
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
                     @else
-                        <p>Aucun stock trouvé.</p>
+                    <p>Aucun stock trouvé.</p>
                     @endif
                 </div>
             </div>
