@@ -5,24 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use App\Models\Inventory;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
-
 
 class InventoryController extends Controller
 {
     protected $apiBaseUrl;
+    protected $filmApiUrl;
     protected $httpClient;
 
     public function __construct()
     {
-        $this->apiBaseUrl = sprintf(
-            '%s:%s/toad/inventory',
-            trim(env('TOAD_SERVER', 'http://localhost'), " \"/"),
-            trim(env('TOAD_PORT', '8080'), " \"/")
-        );
+        $server = trim(env('TOAD_SERVER', 'http://localhost'), " \"/");
+        $port = trim(env('TOAD_PORT', '8080'), " \"/");
+
+        $this->apiBaseUrl = $server . ':' . $port . '/toad/inventory';
+        $this->filmApiUrl = $server . ':' . $port . '/toad/film';
         $this->httpClient = new Client();
+
         Log::info('InventoryController initialized with API base URL: ' . $this->apiBaseUrl);
     }
 
@@ -31,15 +30,26 @@ class InventoryController extends Controller
         try {
             $response = $this->httpClient->get($this->apiBaseUrl . '/all');
             $inventory = collect(json_decode($response->getBody()->getContents(), true));
-
             Log::info('Inventaire récupéré :', $inventory->toArray());
 
-            // Regrouper par filmId et storeId pour afficher le stock dispo
+            // Récupération des titres des films via API
+            try {
+                $filmResponse = $this->httpClient->get($this->filmApiUrl . '/all');
+                $films = collect(json_decode($filmResponse->getBody()->getContents(), true));
+                $filmTitles = $films->pluck('title', 'filmId');
+            } catch (\Exception $filmError) {
+                Log::warning('Erreur API films : ' . $filmError->getMessage());
+                $filmTitles = collect();
+            }
+
+            // Groupement inventaire par filmId + storeId
             $groupedInventory = $inventory->groupBy(function ($item) {
                 return $item['filmId'] . '_' . $item['storeId'];
-            })->map(function ($items) {
+            })->map(function ($items) use ($filmTitles) {
+                $filmId = $items[0]['filmId'];
                 return [
-                    'filmId' => $items[0]['filmId'],
+                    'filmId' => $filmId,
+                    'filmTitle' => $filmTitles[$filmId] ?? 'Titre inconnu',
                     'storeId' => $items[0]['storeId'],
                     'stockDisponible' => count($items),
                 ];
@@ -47,13 +57,10 @@ class InventoryController extends Controller
 
             return view('inventory.index', ['inventory' => $groupedInventory]);
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la récupération de l\'inventaire : ' . $e->getMessage());
-            return redirect()->back()->withErrors('Impossible de récupérer les stocks.');
+            Log::error('Erreur dans InventoryController@index : ' . $e->getMessage());
+            return redirect()->back()->withErrors('Impossible de charger la page inventaire.');
         }
     }
-
-
-
 
     public function show($id)
     {
@@ -73,39 +80,44 @@ class InventoryController extends Controller
     public function create()
     {
         try {
-            // Appel à l'API des films
-            $filmResponse = $this->httpClient->get(sprintf(
-                '%s:%s/toad/film/all',
-                trim(env('TOAD_SERVER', 'http://localhost'), " \"/"),
-                trim(env('TOAD_PORT', '8080'), " \"/")
-            ));
+            $filmResponse = $this->httpClient->get($this->filmApiUrl . '/all');
             $films = json_decode($filmResponse->getBody()->getContents(), true);
 
             return view('inventory.create', ['films' => $films]);
         } catch (\Exception $e) {
-            Log::error('Erreur lors du chargement des films pour création de stock : ' . $e->getMessage());
+            Log::error('Erreur chargement films pour formulaire create() : ' . $e->getMessage());
             return redirect()->route('inventory.index')->withErrors('Impossible de charger les films.');
         }
     }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'film_id' => 'required|integer',
-        'store_id' => 'required|integer',
-    ]);
-
-    try {
-        $this->httpClient->post($this->apiBaseUrl . '/add', [
-            'form_params' => $validated
+    {
+        $validated = $request->validate([
+            'film_id' => 'required|integer',
+            'store_id' => 'required|integer',
         ]);
-        return redirect()->route('inventory.index')->with('success', 'Stock ajouté avec succès !');
-    } catch (\Exception $e) {
-        Log::error("Erreur lors de l'ajout du stock : " . $e->getMessage());
-        return back()->withInput()->withErrors('Erreur serveur. Stock non ajouté.');
-    }
-}
 
+        // Ajoute last_update (et tout autre champ nécessaire)
+        $validated['last_update'] = now()->format('Y-m-d H:i:s'); // format SQL classique
+        $validated['existe'] = true; // si c'est requis aussi
+
+        Log::info('Stock - Données reçues dans store() : ', $validated);
+
+
+        try {
+            $response = $this->httpClient->post($this->apiBaseUrl . '/add', [
+                'form_params' => $validated
+            ]);
+
+            $body = $response->getBody()->getContents();
+            Log::info('Stock - Réponse API après ajout : ' . $body);
+
+            return redirect()->route('inventory.index')->with('success', 'Stock ajouté avec succès !');
+        } catch (\Exception $e) {
+            Log::error("Erreur lors de l'ajout du stock : " . $e->getMessage());
+            return back()->withInput()->withErrors('Erreur serveur. Stock non ajouté.');
+        }
+    }
 
     public function edit($id)
     {
@@ -138,14 +150,27 @@ class InventoryController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $film_id, $store_id)
     {
+        $quantity = $request->input('quantity', 1);
+
         try {
-            $this->httpClient->delete($this->apiBaseUrl . '/delete/' . $id);
-            return redirect()->route('inventory.index')->with('success', 'Stock supprimé !');
+            // Récupérer tous les stocks pour ce film/store
+            $response = $this->httpClient->get($this->apiBaseUrl . '/all');
+            $inventory = collect(json_decode($response->getBody()->getContents(), true));
+
+            $stocksToDelete = $inventory->filter(function ($item) use ($film_id, $store_id) {
+                return $item['filmId'] == $film_id && $item['storeId'] == $store_id;
+            })->take($quantity);
+
+            foreach ($stocksToDelete as $stock) {
+                $this->httpClient->delete($this->apiBaseUrl . '/delete/' . $stock['inventoryId']);
+            }
+
+            return redirect()->route('inventory.index')->with('success', "$quantity exemplaire(s) supprimé(s) !");
         } catch (\Exception $e) {
-            Log::error("Erreur suppression inventaire : " . $e->getMessage());
-            return back()->withErrors('Erreur serveur. Suppression impossible.');
+            Log::error("Erreur suppression stock(s) : " . $e->getMessage());
+            return redirect()->route('inventory.index')->withErrors("Erreur lors de la suppression.");
         }
     }
 }

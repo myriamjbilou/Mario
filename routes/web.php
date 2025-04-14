@@ -41,10 +41,14 @@ Route::delete('/films/{id}', [FilmController::class, 'destroy'])->name('films.de
 
 
 
-Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
-Route::get('/inventory/{id}', [InventoryController::class, 'show'])->name('inventory.show');
 Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
 Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+Route::get('/inventory/{id}', [InventoryController::class, 'show'])->name('inventory.show');
+Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+Route::delete('/inventory/{film_id}/{store_id}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
+
+
+
 
 
 

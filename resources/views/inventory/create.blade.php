@@ -13,7 +13,7 @@
                 <label for="film_id" class="block text-gray-700 dark:text-white">Film</label>
                 <select name="film_id" id="film_id" class="w-full mt-1 rounded border-gray-300 dark:bg-gray-900 dark:text-white" required>
                     @foreach ($films as $film)
-                    <option value="{{ $film['filmId'] }}">{{ $film['title'] }}</option>
+                        <option value="{{ $film['filmId'] }}">{{ $film['title'] }}</option>
                     @endforeach
                 </select>
             </div>
