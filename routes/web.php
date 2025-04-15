@@ -5,6 +5,7 @@ use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\RentalController;
 
 // Redirige la racine vers la page de connexion pour le staff
 Route::get('/', function () {
@@ -47,11 +48,6 @@ Route::get('/inventory/{id}', [InventoryController::class, 'show'])->name('inven
 Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
 Route::delete('/inventory/{film_id}/{store_id}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
 
-
-
-
-
-
-
+Route::get('/rental', [RentalController::class, 'index'])->name('rental.index');
 
 // require __DIR__.'/auth.php';

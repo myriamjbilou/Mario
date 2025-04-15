@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Inventory extends Model
 {
-    protected $table = 'inventory'; 
+    protected $table = 'inventory';
     protected $primaryKey = 'inventory_id';
 
-    public $timestamps = false; 
+    public $timestamps = false;
 
     protected $fillable = [
         'film_id',
@@ -18,5 +18,8 @@ class Inventory extends Model
         'last_update',
     ];
 
-    
+    public function film()
+    {
+        return $this->belongsTo(Film::class, 'film_id');
+    }
 }
