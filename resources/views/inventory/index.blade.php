@@ -11,10 +11,17 @@
                 <h1 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6">Inventaire des films</h1>
 
                 @if(session('success'))
-                <div class="mb-4 p-3 rounded bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                    {{ session('success') }}
+                <div
+                    x-data="{ show: true }"
+                    x-init="setTimeout(() => show = false, 2000)"
+                    x-show="show"
+                    x-transition
+                    class="mb-4 p-3 rounded bg-green-600 text-white shadow">
+                    ✅ {{ session('success') }}
                 </div>
                 @endif
+
+
 
                 @if (!empty($inventory))
                 <table class="w-full table-auto text-sm text-left border border-gray-300 dark:border-gray-700">
