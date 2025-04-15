@@ -8,7 +8,7 @@
     <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                <h1 class="text-2xl font-bold mb-6 text-[#ff2d20]">Historique des locations</h1>
+                <h1 class="text-2xl font-bold mb-6 text-white">Historique des locations</h1>
 
                 <!-- Formulaire de recherche -->
                 <form method="GET" class="mb-6">
