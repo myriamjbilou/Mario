@@ -12,6 +12,16 @@
                     <h1 class="text-3xl font-bold mb-12 text-[#ff2d20] text-center">
                         {{ __("Voici la liste des films") }}
                     </h1>
+                    @if (session('success'))
+                    <div
+                        x-data="{ show: true }"
+                        x-init="setTimeout(() => show = false, 3000)"
+                        x-show="show"
+                        x-transition.duration.500ms
+                        class="mb-6 px-4 py-3 rounded-lg bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 shadow">
+                        ✅ <span class="font-medium">{{ session('success') }}</span>
+                    </div>
+                    @endif
 
                     <!-- Formulaire de recherche -->
                     <form method="GET" action="{{ route('films.index') }}" class="bg-gray-800 p-4 rounded-md shadow-sm mb-8">
