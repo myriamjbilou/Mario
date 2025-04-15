@@ -34,7 +34,7 @@
                                     name="search"
                                     placeholder="Rechercher un film..."
                                     value="{{ request('search') }}"
-                                    class="w-full p-2 border border-gray-600 rounded-lg bg-gray-900 text-white" />
+                                    class="w-full p-2 border border-gray-600 rounded-lg bg-gray-900 text-black" />
                             </div>
                             <button type="submit" class="self-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500">
                                 Rechercher
