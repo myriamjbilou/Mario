@@ -14,9 +14,9 @@
                 <form method="GET" class="mb-6">
                     <div class="flex flex-wrap items-end gap-4">
                         <div class="flex-1">
-                            <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Rechercher un film ou client ID</label>
+                            <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Recherche :</label>
                             <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                placeholder="Ex: Harry Potter ou ID client 5"
+                                placeholder="Ex: Harry Potter ou nom client"
                                 class="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                         </div>
 
