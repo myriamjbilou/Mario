@@ -23,7 +23,7 @@
                         {{ __('Inventaire') }}
                     </x-nav-link>
                     <x-nav-link :href="route('rental.index')" :active="request()->routeIs('rental.*')">
-                        {{ __('Locations') }}
+                        {{ __('Suivi locations') }}
                     </x-nav-link>
 
 

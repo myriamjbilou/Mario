@@ -59,7 +59,8 @@ class RentalController extends Controller
                 $search = strtolower($request->input('search'));
                 $rentals = $rentals->filter(function ($rental) use ($search) {
                     return str_contains(strtolower($rental['filmTitle'] ?? ''), $search)
-                        || str_contains((string) $rental['customerId'], $search);
+                        || str_contains((string) $rental['customerId'], $search)
+                        || str_contains(strtolower($rental['customerName'] ?? ''), $search);
                 });
             }
 
