@@ -24,6 +24,7 @@ class RentalController extends Controller
             $rentalUrl = $baseUrl . '/toad/rental/all';
             $inventoryUrl = $baseUrl . '/toad/inventory/all';
             $filmUrl = $baseUrl . '/toad/film/all';
+            $customerUrl = $baseUrl . '/toad/customer/all';
 
             // 📦 Récupération des données
             $rentalResponse = $this->httpClient->get($rentalUrl);
@@ -35,13 +36,23 @@ class RentalController extends Controller
             $filmResponse = $this->httpClient->get($filmUrl);
             $films = collect(json_decode($filmResponse->getBody()->getContents(), true))->keyBy('filmId');
 
+            $customerResponse = $this->httpClient->get($customerUrl);
+            $customers = collect(json_decode($customerResponse->getBody()->getContents(), true))->keyBy('customerId');
+
             // 🔁 Ajout du titre dans chaque location
-            $rentals = $rentals->map(function ($rental) use ($inventories, $films) {
+            $rentals = $rentals->map(function ($rental) use ($inventories, $films, $customers) {
                 $inventoryId = $rental['inventoryId'] ?? null;
                 $filmId = $inventories[$inventoryId]['filmId'] ?? null;
                 $rental['filmTitle'] = $films[$filmId]['title'] ?? 'Inconnu';
+            
+                $customer = $customers[$rental['customerId']] ?? null;
+                $rental['customerName'] = $customer 
+                    ? $customer['firstName'] . ' ' . $customer['lastName']
+                    : 'Client inconnu';
+            
                 return $rental;
             });
+            
 
             // 🔍 Recherche
             if ($request->filled('search')) {

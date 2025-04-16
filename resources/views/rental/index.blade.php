@@ -55,6 +55,7 @@
                             <th class="p-2 border">🔁 Retour</th>
                             <th class="p-2 border">📦 Statut</th>
                             <th class="p-2 border">👤 Client</th>
+                            <th class="p-2 border">🆔 Client</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
@@ -62,7 +63,7 @@
                         <tr class="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                             <td class="p-2 border">{{ $rental['rentalId'] ?? '-' }}</td>
                             <td class="p-2 border">
-                                🎬 {{ $rental['filmTitle'] ?? 'Titre inconnu' }}
+                                {{ $rental['filmTitle'] ?? 'Titre inconnu' }}
                             </td>
                             <td class="p-2 border">{{ $rental['rentalDate'] ?? '-' }}</td>
                             <td class="p-2 border">{{ $rental['returnDate'] ?? '⏳ En cours' }}</td>
@@ -70,18 +71,34 @@
                                 @if(!empty($rental['returnDate']))
                                 <span class="text-green-500 font-semibold">✔️ Retourné</span>
                                 @else
-                                <span class="text-yellow-400 font-semibold">📦 En cours</span>
+                                <span class="text-yellow-400 font-semibold">Loué</span>
                                 @endif
                             </td>
-                            <td class="p-2 border">{{ $rental['customerId'] ?? '-' }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                @else
-                <p class="text-center mt-6 text-gray-500 dark:text-gray-400">Aucune location trouvée.</p>
-                @endif
+                            <td class="p-2 border">
+                                <div class="flex items-center justify-between">
+                                    <span>
+                                        {{ $rental['customerName'] ?? 'Client inconnu' }}
+                                    </span>
+                            <td class="p-2 border">
+                                @if(!empty($rental['customerId']))
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-bold leading-none text-white bg-blue-600 rounded-full">
+                                    {{ $rental['customerId'] }}
+                                </span>
+                                @else
+                                <span class="text-gray-400 italic">Non défini</span>
+                                @endif
+                            </td>
+
             </div>
+            </td>
+            </tr>
+            @endforeach
+            </tbody>
+            </table>
+            @else
+            <p class="text-center mt-6 text-gray-500 dark:text-gray-400">Aucune location trouvée.</p>
+            @endif
         </div>
+    </div>
     </div>
 </x-app-layout>
