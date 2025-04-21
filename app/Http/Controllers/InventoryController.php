@@ -18,7 +18,7 @@ class InventoryController extends Controller
         $server = trim(env('TOAD_SERVER', 'http://localhost'), " \"/");
         $port = trim(env('TOAD_PORT', '8080'), " \"/");
 
-        $this->apiBaseUrl = $server . ':' . $port . '/toad/inventory';
+        $this->apiBaseUrl = $server . ':' . $port . '/toad/inventory/available';
         $this->filmApiUrl = $server . ':' . $port . '/toad/film';
         $this->httpClient = new Client();
 
@@ -28,7 +28,7 @@ class InventoryController extends Controller
     public function index()
     {
         try {
-            $response = $this->httpClient->get($this->apiBaseUrl . '/all');
+            $response = $this->httpClient->get($this->apiBaseUrl);
             $inventory = collect(json_decode($response->getBody()->getContents(), true));
             Log::info('Inventaire récupéré :', $inventory->toArray());
 
