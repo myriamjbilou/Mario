@@ -20,7 +20,7 @@ class LoginController extends Controller
 
         // Récupération et nettoyage des variables d'environnement pour le serveur et le port
         $server = trim(env('TOAD_SERVER', 'http://localhost'), " \"/");
-        $port   = trim(env('TOAD_PORT', '8080'), " \"/");
+        $port   = trim(env('TOAD_PORT', '8280'), " \"/");
 
         // Récupérer l'email et le mot de passe depuis la requête
         $email    = urlencode($request->input('email'));

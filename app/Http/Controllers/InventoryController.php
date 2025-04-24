@@ -16,7 +16,7 @@ class InventoryController extends Controller
     public function __construct()
     {
         $server = trim(env('TOAD_SERVER', 'http://localhost'), " \"/");
-        $port = trim(env('TOAD_PORT', '8080'), " \"/");
+        $port = trim(env('TOAD_PORT', '8280'), " \"/");
 
         $this->apiBaseUrl = $server . ':' . $port . '/toad/inventory/available';
         $this->filmApiUrl = $server . ':' . $port . '/toad/film';

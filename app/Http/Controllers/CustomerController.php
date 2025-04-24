@@ -10,7 +10,7 @@ class CustomerController extends Controller
     public function getAll()
     {
         try {
-            $url = rtrim(env('TOAD_SERVER', 'http://localhost'), '/') . ':' . env('TOAD_PORT', '8080') . '/toad/customer/all';
+            $url = rtrim(env('TOAD_SERVER', 'http://localhost'), '/') . ':' . env('TOAD_PORT', '8280') . '/toad/customer/all';
             Log::info('🔁 Appel vers TOAD Customer API : ' . $url);
 
             $response = Http::get($url);

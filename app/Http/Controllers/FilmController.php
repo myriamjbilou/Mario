@@ -17,7 +17,7 @@ class FilmController extends Controller
     {
         $this->apiBaseUrl = sprintf('%s:%s/toad/film',
             trim(env('TOAD_SERVER', 'http://localhost'), " \"/"),
-            trim(env('TOAD_PORT', '8080'), " \"/")
+            trim(env('TOAD_PORT', '8280'), " \"/")
         );
         $this->httpClient = new Client();
         Log::info('FilmController initialized with API base URL: ' . $this->apiBaseUrl);

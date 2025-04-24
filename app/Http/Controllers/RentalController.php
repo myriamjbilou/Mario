@@ -20,7 +20,7 @@ class RentalController extends Controller
     {
         try {
             // 🔗 URLs
-            $baseUrl = trim(env('TOAD_SERVER', 'http://localhost'), " \"/") . ':' . trim(env('TOAD_PORT', '8080'), " \"/");
+            $baseUrl = trim(env('TOAD_SERVER', 'http://localhost'), " \"/") . ':' . trim(env('TOAD_PORT', '8280'), " \"/");
             $rentalUrl = $baseUrl . '/toad/rental/all';
             $inventoryUrl = $baseUrl . '/toad/inventory/all';
             $filmUrl = $baseUrl . '/toad/film/all';
