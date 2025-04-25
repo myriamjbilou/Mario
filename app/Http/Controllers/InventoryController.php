@@ -97,9 +97,9 @@ class InventoryController extends Controller
             'store_id' => 'required|integer',
         ]);
 
-        // Ajoute last_update (et tout autre champ nécessaire)
-        $validated['last_update'] = now()->format('Y-m-d H:i:s'); // format SQL classique
-        $validated['existe'] = true; // si c'est requis aussi
+        
+        $validated['last_update'] = now()->format('Y-m-d H:i:s'); 
+        $validated['existe'] = true; 
 
         Log::info('Stock - Données reçues dans store() : ', $validated);
 
