@@ -26,7 +26,7 @@ class RentalController extends Controller
             $filmUrl = $baseUrl . '/toad/film/all';
             $customerUrl = $baseUrl . '/toad/customer/all';
 
-            // 📦 Récupération des données
+            // Récupération des données
             $rentalResponse = $this->httpClient->get($rentalUrl);
             $rentals = collect(json_decode($rentalResponse->getBody()->getContents(), true));
 
@@ -39,22 +39,22 @@ class RentalController extends Controller
             $customerResponse = $this->httpClient->get($customerUrl);
             $customers = collect(json_decode($customerResponse->getBody()->getContents(), true))->keyBy('customerId');
 
-            // 🔁 Ajout du titre dans chaque location
+            // Ajout du titre dans chaque location
             $rentals = $rentals->map(function ($rental) use ($inventories, $films, $customers) {
                 $inventoryId = $rental['inventoryId'] ?? null;
                 $filmId = $inventories[$inventoryId]['filmId'] ?? null;
                 $rental['filmTitle'] = $films[$filmId]['title'] ?? 'Inconnu';
-            
+
                 $customer = $customers[$rental['customerId']] ?? null;
-                $rental['customerName'] = $customer 
+                $rental['customerName'] = $customer
                     ? $customer['firstName'] . ' ' . $customer['lastName']
                     : 'Client inconnu';
-            
+
                 return $rental;
             });
-            
 
-            // 🔍 Recherche
+
+            // Recherche
             if ($request->filled('search')) {
                 $search = strtolower($request->input('search'));
                 $rentals = $rentals->filter(function ($rental) use ($search) {
@@ -64,7 +64,20 @@ class RentalController extends Controller
                 });
             }
 
-            // ⬆️⬇️ Tri
+            if ($request->filled('start_date') && $request->filled('end_date')) {
+                $startDate = $request->input('start_date');
+                $endDate = $request->input('end_date');
+
+                $rentals = $rentals->filter(function ($rental) use ($startDate, $endDate) {
+                    if (empty($rental['rentalDate'])) {
+                        return false;
+                    }
+                    $rentalDate = substr($rental['rentalDate'], 0, 10); 
+                    return $rentalDate >= $startDate && $rentalDate <= $endDate;
+                });
+            }
+
+            // Tri
             $sort = $request->input('sort', 'recent');
             if ($sort === 'status') {
                 $rentals = $rentals->sortBy(fn($r) => empty($r['returnDate']) ? 0 : 1);

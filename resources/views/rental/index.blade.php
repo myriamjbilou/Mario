@@ -21,6 +21,18 @@
                         </div>
 
                         <div>
+                            <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date de début</label>
+                            <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
+                                class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label for="end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date de fin</label>
+                            <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
+                                class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        </div>
+
+                        <div>
                             <label for="sort" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Trier par</label>
                             <select name="sort" id="sort"
                                 class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white">
@@ -62,9 +74,7 @@
                         @foreach ($rentals as $rental)
                         <tr class="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                             <td class="p-2 border">{{ $rental['rentalId'] ?? '-' }}</td>
-                            <td class="p-2 border">
-                                {{ $rental['filmTitle'] ?? 'Titre inconnu' }}
-                            </td>
+                            <td class="p-2 border">{{ $rental['filmTitle'] ?? 'Titre inconnu' }}</td>
                             <td class="p-2 border">{{ $rental['rentalDate'] ?? '-' }}</td>
                             <td class="p-2 border">{{ $rental['returnDate'] ?? '⏳ En cours' }}</td>
                             <td class="p-2 border">
@@ -74,11 +84,7 @@
                                 <span class="text-yellow-400 font-semibold">Loué</span>
                                 @endif
                             </td>
-                            <td class="p-2 border">
-                                <div class="flex items-center justify-between">
-                                    <span>
-                                        {{ $rental['customerName'] ?? 'Client inconnu' }}
-                                    </span>
+                            <td class="p-2 border">{{ $rental['customerName'] ?? 'Client inconnu' }}</td>
                             <td class="p-2 border">
                                 @if(!empty($rental['customerId']))
                                 <span class="inline-flex items-center px-2 py-1 text-xs font-bold leading-none text-white bg-blue-600 rounded-full">
@@ -88,17 +94,14 @@
                                 <span class="text-gray-400 italic">Non défini</span>
                                 @endif
                             </td>
-
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @else
+                <p class="text-center mt-6 text-gray-500 dark:text-gray-400">Aucune location trouvée.</p>
+                @endif
             </div>
-            </td>
-            </tr>
-            @endforeach
-            </tbody>
-            </table>
-            @else
-            <p class="text-center mt-6 text-gray-500 dark:text-gray-400">Aucune location trouvée.</p>
-            @endif
         </div>
-    </div>
     </div>
 </x-app-layout>
